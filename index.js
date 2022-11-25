@@ -13,15 +13,27 @@ const uri = "mongodb+srv://mahian:ExiP934rnJVB4VIe@cluster0.zft8w2s.mongodb.net/
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 const productCollection = client.db('reseller').collection('products');
+const usersCollection = client.db('reseller').collection('users');
 
 async function run() {
     try {
-        // app.get("/products", (req, res) => {
-        //     res.send(product);
-        // });
-        app.post("/products", async(req, res)=> {
+
+        // post product
+        app.post("/products", async (req, res) => {
             const product = req.body;
             const result = await productCollection.insertOne(product)
+            res.send(result);
+        })
+        // get products
+        app.get("/products", async (req, res) => {
+            const query = {}
+            const products = await productCollection.find(query).toArray();
+            res.send(products);
+        })
+
+        app.post("/users", async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user)
             res.send(result);
         })
     }
