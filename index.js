@@ -14,10 +14,10 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 const productCollection = client.db('reseller').collection('products');
 const usersCollection = client.db('reseller').collection('users');
+const categoriesCollection = client.db('reseller').collection('categories');
 
 async function run() {
     try {
-
         // post product
         app.post("/products", async (req, res) => {
             const product = req.body;
@@ -30,11 +30,29 @@ async function run() {
             const products = await productCollection.find(query).toArray();
             res.send(products);
         })
-
+        // get limited products
+        app.get("/limitedProducts", async (req, res) => {
+            const query = {}
+            const products = await productCollection.find(query).limit(3).toArray();
+            res.send(products);
+        })
+        // post user
         app.post("/users", async (req, res) => {
             const user = req.body;
             const result = await usersCollection.insertOne(user)
             res.send(result);
+        })
+        // get user
+        app.get("/users", async (req, res) => {
+            const query = {};
+            const users = await usersCollection.find(query).toArray();
+            res.send(users);
+        })
+        // get categories
+        app.get("/categories", async(req, res)=>{
+            const query = {}
+            const categories = await categoriesCollection.find(query).toArray();
+            res.send(categories);
         })
     }
     finally { }
