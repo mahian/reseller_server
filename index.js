@@ -57,6 +57,14 @@ async function run() {
             const user = await usersCollection.findOne(query);
             res.send(user);
         })
+
+        // delete one user
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await usersCollection.deleteOne(query);
+            res.send(result);
+        });
     
         // get user
         app.get("/buyers", async (req, res) => {
@@ -73,11 +81,11 @@ async function run() {
         })
 
         // get specific seller
-        app.get("/sellers/:id", async (req, res) => {
-            const id = req.params.id;
-            const query = {_id: ObjectId(id)};
+        app.get("/sellers/:email", async (req, res) => {
+            const email = req.params.email;
+            const query = {email};
             const user = await usersCollection.findOne(query);
-            res.send({isSeller: user.role === "seller"});
+            res.send({isSeller: user?.role === "seller"});
         })
 
         // get categories
