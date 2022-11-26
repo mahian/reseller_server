@@ -3,7 +3,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const product = require('./product.json');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 app.use(express.json());
 app.use(cors())
@@ -42,12 +42,36 @@ async function run() {
             const result = await usersCollection.insertOne(user)
             res.send(result);
         })
-        // get user
+    
+        // get all user
         app.get("/users", async (req, res) => {
             const query = {};
             const users = await usersCollection.find(query).toArray();
             res.send(users);
         })
+
+        // get one specific user
+        app.get("/users/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const user = await usersCollection.find(query).toArray();
+            res.send(user);
+        })
+    
+        // get user
+        app.get("/buyers", async (req, res) => {
+            const query = {role: "user"};
+            const users = await usersCollection.find(query).toArray();
+            res.send(users);
+        })
+
+        // get seller
+        app.get("/sellers", async (req, res) => {
+            const query = {role: "seller"};
+            const users = await usersCollection.find(query).toArray();
+            res.send(users);
+        })
+
         // get categories
         app.get("/categories", async(req, res)=>{
             const query = {}
