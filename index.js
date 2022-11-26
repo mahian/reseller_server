@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 5000;
-const product = require('./product.json');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
@@ -24,25 +23,28 @@ async function run() {
             const result = await productCollection.insertOne(product)
             res.send(result);
         })
+
         // get products
         app.get("/products", async (req, res) => {
             const query = {}
             const products = await productCollection.find(query).toArray();
             res.send(products);
         })
+
         // get limited products
         app.get("/limitedProducts", async (req, res) => {
             const query = {}
             const products = await productCollection.find(query).limit(3).toArray();
             res.send(products);
         })
+
         // post user
         app.post("/users", async (req, res) => {
             const user = req.body;
             const result = await usersCollection.insertOne(user)
             res.send(result);
         })
-    
+
         // get all user
         app.get("/users", async (req, res) => {
             const query = {};
@@ -88,6 +90,14 @@ async function run() {
             res.send({isSeller: user?.role === "seller"});
         })
 
+        // get admin
+        app.get("/admin/:email", async (req, res) => {
+            const email = req.params.email;
+            const query = {email};
+            const user = await usersCollection.findOne(query);
+            res.send({isAdmin: user?.role === "admin"});
+        })
+
         // get categories
         app.get("/categories", async(req, res)=>{
             const query = {}
@@ -95,7 +105,7 @@ async function run() {
             res.send(categories);
         })
     }
-    finally { }
+    finally {}
 }
 run().catch(err => console.log(err))
 
