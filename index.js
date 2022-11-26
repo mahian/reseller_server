@@ -54,7 +54,7 @@ async function run() {
         app.get("/users/:id", async (req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
-            const user = await usersCollection.find(query).toArray();
+            const user = await usersCollection.findOne(query);
             res.send(user);
         })
     
@@ -70,6 +70,14 @@ async function run() {
             const query = {role: "seller"};
             const users = await usersCollection.find(query).toArray();
             res.send(users);
+        })
+
+        // get specific seller
+        app.get("/sellers/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const user = await usersCollection.findOne(query);
+            res.send({isSeller: user.role === "seller"});
         })
 
         // get categories
