@@ -31,6 +31,22 @@ async function run() {
             res.send(products);
         })
 
+        // get specific product
+        app.get("/products/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)}
+            const product = await productCollection.findOne(query);
+            res.send(product);
+        })
+
+        // delete product
+        app.delete("/products/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)}
+            const product = await productCollection.deleteOne(query);
+            res.send(product);
+        })
+
         // get limited products
         app.get("/limitedProducts", async (req, res) => {
             const query = {}
