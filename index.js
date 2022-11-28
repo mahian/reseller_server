@@ -42,7 +42,7 @@ async function run() {
         })
 
         // get sellers product
-        app.get("/products", async (req, res) => {
+        app.get("/myProducts", async (req, res) => {
             const email = req.query.email;
             const query = {email: email}
             const product = await productCollection.find(query).toArray();
@@ -50,7 +50,7 @@ async function run() {
         })
 
         // get category wise product
-        app.get("/products/:id", async (req, res) => {
+        app.get("/category/:id", async (req, res) => {
             const id = req.params.id;
             const query = {category: id};
             const products = await productCollection.find(query).toArray();
