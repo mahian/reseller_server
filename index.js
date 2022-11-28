@@ -2,18 +2,20 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 5000;
 const cors = require('cors');
+require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 app.use(express.json());
 app.use(cors())
 
 
-const uri = "mongodb+srv://mahian:ExiP934rnJVB4VIe@cluster0.zft8w2s.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://mahian:${process.env.MONGODB_PASS}@cluster0.zft8w2s.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 const productCollection = client.db('reseller').collection('products');
 const usersCollection = client.db('reseller').collection('users');
 const categoriesCollection = client.db('reseller').collection('categories');
+const orderedCollection = client.db('reseller').collection('orders');
 
 async function run() {
     try {
@@ -32,11 +34,27 @@ async function run() {
         })
 
         // get specific product
-        app.get("/products/:id", async (req, res) => {
+        app.get("/product/:id", async (req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)}
             const product = await productCollection.findOne(query);
             res.send(product);
+        })
+
+        // get sellers product
+        app.get("/products", async (req, res) => {
+            const email = req.query.email;
+            const query = {email: email}
+            const product = await productCollection.find(query).toArray();
+            res.send(product);
+        })
+
+        // get category wise product
+        app.get("/products/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = {category: id};
+            const products = await productCollection.find(query).toArray();
+            res.send(products);
         })
 
         // delete product
@@ -119,6 +137,13 @@ async function run() {
             const query = {}
             const categories = await categoriesCollection.find(query).toArray();
             res.send(categories);
+        })
+
+        // post order
+        app.post("/order", async (req, res) => {
+            const order = req.body;
+            const result = await orderedCollection.insertOne(order);
+            res.send(result);
         })
     }
     finally {}
