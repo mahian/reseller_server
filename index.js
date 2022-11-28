@@ -150,4 +150,8 @@ async function run() {
 }
 run().catch(err => console.log(err))
 
+app.get('/', (req, res)=> {
+    res.send('hellow world');
+})
+
 app.listen(port, () => console.log(`your app is running at ${port}`));
