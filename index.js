@@ -6,7 +6,7 @@ require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 
 const uri = `mongodb+srv://mahian:${process.env.MONGODB_PASS}@cluster0.zft8w2s.mongodb.net/?retryWrites=true&w=majority`;
@@ -116,20 +116,20 @@ async function run() {
             res.send(users);
         })
 
-        // get specific seller
-        app.get("/sellers/:email", async (req, res) => {
-            const email = req.params.email;
-            const query = {email};
-            const user = await usersCollection.findOne(query);
-            res.send({isSeller: user?.role === "seller"});
-        })
-
         // get admin
         app.get("/admin/:email", async (req, res) => {
             const email = req.params.email;
             const query = {email};
             const user = await usersCollection.findOne(query);
             res.send({isAdmin: user?.role === "admin"});
+        })
+
+        // get specific seller
+        app.get("/sellers/:email", async (req, res) => {
+            const email = req.params.email;
+            const query = {email};
+            const user = await usersCollection.findOne(query);
+            res.send({isSeller: user?.role === "seller"});
         })
 
         // get categories
@@ -144,6 +144,21 @@ async function run() {
             const order = req.body;
             const result = await orderedCollection.insertOne(order);
             res.send(result);
+        })
+
+        // get order
+        app.get("/orders", async (req, res) => {
+            const query = {};
+            const orders = await orderedCollection.find(query).toArray();
+            res.send(orders);
+        })
+
+        // get booked order
+        app.get("/bookedOrders", async (req, res) => {
+            const email = req.query.email;
+            const query = {email: email};
+            const orders = await orderedCollection.find(query).toArray();
+            res.send(orders);
         })
     }
     finally {}
